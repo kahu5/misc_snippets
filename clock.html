@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#txt{
+font-size:2em;
+}
+</style>
+</head>
+<body onload="startTime()">
+
+<div id="txt"></div>
+
+<script>
+var url_string = window.location.href
+var url = new URL(url_string);
+const secondParam = url.searchParams.get("s");
+const paramFontFamily = url.searchParams.get("font-family");
+const paramFontSize = url.searchParams.get("font-size");
+let params = url_string.substring(url_string.lastIndexOf('/')+1);
+console.log(params);
+console.log(paramFontSize);
+
+function startTime() {
+  const today = new Date();
+  let h = today.getHours();
+  let m = today.getMinutes();
+  let s = today.getSeconds();
+var ampm = h >= 12 ? 'pm' : 'am';
+  h = h % 12;
+  h = h ? h : 12; // the hour '0' should be '12';
+ // m = m < 10 ? '0'+m : m;
+  m = checkTime(m);
+  s = checkTime(s)
+if (secondParam == 1){
+  var timeDisplay =  h + ":" + m + ":" + s + " " + ampm;
+	} else{ 
+  var timeDisplay =  h + ":" + m + " " + ampm;
+	}
+	document.getElementById('txt').innerHTML = timeDisplay;
+if (paramFontFamily){
+	document.getElementById('txt').style.fontFamily = paramFontFamily;
+}
+if (paramFontSize){
+	document.getElementById('txt').style.fontSize= paramFontSize;
+}
+console.log(h + ":" + m + ":" + s + " " + ampm);
+  setTimeout(startTime, 1000);
+}
+
+function checkTime(i) {
+  if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+  return i;
+}
+</script>
+
+</body>
+</html>
