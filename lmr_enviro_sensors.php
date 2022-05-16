@@ -5,7 +5,8 @@
 </head>
 <body>
 <?php
-echo date("l jS \of F Y h:i:s A"). "<br>";
+date_default_timezone_set("America/New_York");
+echo date("l jS \of F Y h:i A"). "<br>";
 
 $RiverXml = "https://water.weather.gov/ahps2/hydrograph_to_xml.php?gage=kimo1&output=xml";
 $noaaHydro = simplexml_load_file($RiverXml) or die("Error: Cannot create object");
