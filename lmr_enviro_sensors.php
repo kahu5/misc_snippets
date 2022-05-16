@@ -5,9 +5,12 @@
 </head>
 <body>
 <?php
+echo date("l jS \of F Y h:i:s A"). "<br>";
+
 $RiverXml = "https://water.weather.gov/ahps2/hydrograph_to_xml.php?gage=kimo1&output=xml";
 $noaaHydro = simplexml_load_file($RiverXml) or die("Error: Cannot create object");
 
+$currentExemption = $noaaHydro->observed;
 $currentLevelName = $noaaHydro->observed->datum[0]->primary['name'];
 $currentLevel = $noaaHydro->observed->datum[0]->primary;
 $currentLevelUnit = $noaaHydro->observed->datum[0]->primary['units'];
@@ -17,13 +20,18 @@ $currentFlowRate = $noaaHydro->observed->datum[0]->secondary;
 $currentFlowUnit = $noaaHydro->observed->datum[0]->secondary['units'];
 $currentValidDate = $noaaHydro->observed->datum[0]->valid;
 
-if($currentLevelUnit >= $previousLevelUnit){
+if(isset($currentLevelUnit) && $currentLevelUnit > $previousLevelUnit){
   $rateChange = "&#x25BC;";
+} elseif(isset($currentLevelUnit) && $currentLevelUnit < $previousLevelUnit) {
+  $rateChange = "&#x25B2;";
 } else {
   $rateChange = "&#x25B2;";
 }
 
 echo "<h3>".$noaaHydro['name']."</h3>";
+if(!empty($currentExemption)){
+  echo $currentExemption. "<br>";
+} else {
 echo "Current Bank Level: ";
 echo $currentLevel . $currentLevelUnit . $rateChange ." @ <small>". $currentValidDate. "</small><br>";
 echo $currentFlowName . ": " . $currentFlowRate . $currentFlowUnit ."<br>";
@@ -49,8 +57,10 @@ $currentStage =
     'UNKNOWN')))));
 
 echo $currentStage;
+}
 
-$epaEnviroUV = "https://s3.amazonaws.com/dmap-api-cache-ncc-production/20220514/hourly/zip/45039.xml";
+$uvDate = date("Ymd");
+$epaEnviroUV = "https://s3.amazonaws.com/dmap-api-cache-ncc-production/$uvDate/hourly/zip/45039.xml";
 $MainevilleUV = simplexml_load_file($epaEnviroUV) or die("Error: Cannot create object");
 
 echo "<h3>UV Rating</h3>";
